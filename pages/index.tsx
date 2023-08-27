@@ -34,13 +34,16 @@ const Index: NextPage = () => {
   const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
 
   const onAddColumn = () => {
-    setColumns((state) => [
-      ...state,
-      {
-        id: generateID(),
-        title: `Column ${state.length + 1}`,
-      },
-    ]);
+    setColumns((state) => {
+      const clone = structuredClone(state);
+      return [
+        ...clone,
+        {
+          id: generateID(),
+          title: `Column ${clone.length + 1}`,
+        },
+      ];
+    });
   }
   
   const onDragEnd = (event: DragEndEvent) => {
@@ -80,18 +83,20 @@ const Index: NextPage = () => {
     }
   }
 
-  const onAddCard = (columnId: string) => {
+  const onAddTask = (columnId: string) => {
     const findColumnById = columns.find(column => column.id === columnId);
     if (!findColumnById) return;
     setTasks(state => {
-      const taskLength = state?.filter(item => item.columnId === columnId);
+      const clone = structuredClone(state);
+      const taskLength = clone?.filter((item) => item.columnId === columnId);
       const newTask = {
         columnId,
         id: generateID(),
         title: `New Title ${(taskLength?.length || 0) + 1}`,
         createdAt: new Date().toString(),
       };
-      return [...(state || []), newTask];
+
+      return [...(clone || []), newTask];
     })
   };
 
@@ -135,12 +140,11 @@ const Index: NextPage = () => {
     }
 
   }
-  console.log("tasks ", tasks);
+  console.log("tasks ", columns, tasks);
 
   const onEditTitleColumn = (id: string, title: string) => {
     setColumns(columns => {
       const findColumnByid = columns.findIndex((column) => column.id === id);
-      console.log("find ", findColumnByid);
       if (findColumnByid === -1) return columns;
       const clone = structuredClone(columns);
       clone.splice(findColumnByid, 1, {
@@ -152,7 +156,6 @@ const Index: NextPage = () => {
   };
 
   const onEditTask = (id: string, title: string) => {
-    console.log("id ", id, title);
     setTasks(tasks => {
       const findTaskByid = tasks.findIndex((task) => task.id === id);
       if (findTaskByid === -1) return tasks;
@@ -196,7 +199,7 @@ const Index: NextPage = () => {
               <Column
                 {...item}
                 key={item.id}
-                onAddCard={onAddCard}
+                onAddTask={onAddTask}
                 onEditTitleColumn={onEditTitleColumn}
                 tasks={filterTasksByColumnId(item.id)}
               >
@@ -204,7 +207,7 @@ const Index: NextPage = () => {
                   items={taskIds}
                   strategy={verticalListSortingStrategy}
                 >
-                  {tasks.map((task) => (
+                  {tasks.filter(task => task.columnId === item.id).map((task) => (
                     <Card onEdit={onEditTask} key={task.id} {...task} />
                   ))}
                 </SortableContext>

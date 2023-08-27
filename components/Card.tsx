@@ -36,7 +36,6 @@ export default function Card({ id, columnId, title, createdAt, onEdit }: TCard &
     transition: transition || "",
   };
 
-  console.log("editable ", editable);
   if (isDragging) {
     return (
       <div

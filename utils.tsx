@@ -1,5 +1,3 @@
-import { TColumn } from "./types";
-
 export const generateID = (length: number = 10): string => {
   let result = "";
   const characters =

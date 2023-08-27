@@ -9,7 +9,7 @@ import { DragIndicatorIcon, PencilSquareIcon } from "./Icons";
 type TContainerProps = React.ComponentPropsWithoutRef<"div"> &
   TColumn & {
     isDragOverlay?: boolean;
-    onAddCard?: (columnId: string) => void;
+    onAddTask?: (columnId: string) => void;
     tasks: TCard[];
     onEditTitleColumn?: (id:string, value: string) => void;
   };
@@ -19,7 +19,7 @@ export default function Column({
   isDragOverlay,
   className,
   title,
-  onAddCard,
+  onAddTask,
   tasks,
   onEditTitleColumn,
   children,
@@ -118,7 +118,7 @@ export default function Column({
           </div>
         </div>
         <div
-          onClick={() => onAddCard && onAddCard(id)}
+          onClick={() => onAddTask && onAddTask(id)}
           className="mt-4 cursor-pointer rounded-lg text-sm hover:bg-grey-200 py-3 flex justify-center items-center font-semibold"
         >
           + Add Task
