@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Head from "next/head";
 import { useCallback, useMemo, useState } from "react";
 import cn from "classnames";
-import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove, horizontalListSortingStrategy, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { TCard, TColumn } from "@/types";
 import Column from "@/components/Column";
@@ -11,6 +11,7 @@ import { generateID } from "@/utils";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import Card from "@/components/Card";
+import { TrashIcon } from "@/components/Icons";
 
 
 type TContainer = {
@@ -117,7 +118,6 @@ const Index: NextPage = () => {
     const isOverTask = over.data.current?.type === "Task";
     
     if (isActiveTask && isOverTask) {
-      console.log("move to another column");
       setTasks(tasks => {
         const findOverIndex = tasks.findIndex(task => task.id === dataTaskOver.id);
         const findActiveIndex = tasks.findIndex(task => task.id === dataTaskActive.id);
@@ -138,9 +138,7 @@ const Index: NextPage = () => {
         return arrayMove(tasks, findActiveIndex, findActiveIndex);   
       });
     }
-
   }
-  console.log("tasks ", columns, tasks);
 
   const onEditTitleColumn = (id: string, title: string) => {
     setColumns(columns => {
@@ -169,12 +167,41 @@ const Index: NextPage = () => {
     })
   };
 
+  const onDeleteTask = (id:string) => {
+    setTasks(tasks => {
+      const findTaskByid = tasks.findIndex((task) => task.id === id);
+      if (findTaskByid === -1) return tasks;
+      const clone = structuredClone(tasks);
+      clone.splice(findTaskByid, 1);
+      return clone;
+    })
+  };
+
+  const onRemoveColumn = (id: string) => {
+    setColumns((columns) => {
+      const findColumnByid = columns.findIndex((column) => column.id === id);
+      if (findColumnByid === -1) return columns;
+      const clone = structuredClone(columns);
+      clone.splice(findColumnByid, 1);
+      return clone;
+    });
+    
+    // find task by column
+    const findTaskByColumnId = tasks.some(task => task.columnId === id);
+    if (!findTaskByColumnId) return;
+    setTasks(tasks => {
+      const filterWithoutColumnId = tasks.filter(task => task.columnId !== id);
+      return filterWithoutColumnId;
+    });
+  };
+
   const supportSensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance:8
       }
-    })
+    }),
+    useSensor(TouchSensor)
   )
 
   return (
@@ -182,8 +209,13 @@ const Index: NextPage = () => {
       <Head>
         <title>Todos App</title>
         <meta name="description" content="Todos app" />
+        <meta name="viewport" content="width=device-width, initial-scale=0.1" />
       </Head>
-      <h1 className="text-2xl font-semibold text-center my-6">Todos App</h1>
+      <h1
+        className="text-2xl font-semibold text-center my-6"
+      >
+        Todos App
+      </h1>
       <div className="flex gap-x-7 pt-8 mx-10 min-h-screen overflow-auto ">
         <DndContext
           sensors={supportSensors}
@@ -201,15 +233,23 @@ const Index: NextPage = () => {
                 key={item.id}
                 onAddTask={onAddTask}
                 onEditTitleColumn={onEditTitleColumn}
+                onRemove={onRemoveColumn}
                 tasks={filterTasksByColumnId(item.id)}
               >
                 <SortableContext
                   items={taskIds}
                   strategy={verticalListSortingStrategy}
                 >
-                  {tasks.filter(task => task.columnId === item.id).map((task) => (
-                    <Card onEdit={onEditTask} key={task.id} {...task} />
-                  ))}
+                  {tasks
+                    .filter((task) => task.columnId === item.id)
+                    .map((task) => (
+                      <Card
+                        onEdit={onEditTask}
+                        onDelete={onDeleteTask}
+                        key={task.id}
+                        {...task}
+                      />
+                    ))}
                 </SortableContext>
               </Column>
             ))}

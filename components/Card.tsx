@@ -1,14 +1,24 @@
 import { TCard } from "@/types";
 import cn from "classnames";
 import React, { useRef, useState } from "react";
-import { PencilSquareIcon, TimeIcon } from "./Icons";
+import { PencilSquareIcon, TimeIcon, TrashIcon } from "./Icons";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
-export default function Card({ id, columnId, title, createdAt, onEdit }: TCard & { onEdit?: (id: string, value: string) => void }) {
+export default function Card({
+  id,
+  columnId,
+  title,
+  createdAt,
+  onEdit,
+  onDelete,
+}: TCard & {
+  onEdit?: (id: string, value: string) => void;
+  onDelete?: (id: string) => void;
+}) {
   const [editable, setEditable] = useState<boolean>(false);
   const {
     isDragging,
@@ -105,6 +115,17 @@ export default function Card({ id, columnId, title, createdAt, onEdit }: TCard &
         )}
       >
         <PencilSquareIcon color="#333" width="15" height="15" />
+      </div>
+      <div
+        onClick={() => onDelete && onDelete(id)}
+        className={cn(
+          "absolute bottom-2 rounded-md hidden bg-red-600 hover:bg-red-700 p-1.5 right-3",
+          {
+            "group-hover:block": !editable,
+          }
+        )}
+      >
+        <TrashIcon color="white" width="13" height="13" />
       </div>
     </div>
   );

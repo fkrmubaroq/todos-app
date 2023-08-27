@@ -7,4 +7,25 @@
 html, body{
   font-family: 'Noto Sans', sans-serif;
   font-size: 14px;
+  position: fixed;
+  width: 100%;
+  top:0;
+  right:0;
+  left:0;
+  bottom:0;
+  overflow: hidden;
+}
+
+.hover-icon-white:hover{
+  svg {
+      @apply stroke-white;
+  
+      rect,
+      polyline,
+      line,
+      circle,
+      path {
+        @apply stroke-white;
+      }
+    }
 }

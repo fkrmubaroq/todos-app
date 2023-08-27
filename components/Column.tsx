@@ -4,14 +4,15 @@ import cn from "classnames";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import Card from "./Card";
-import { DragIndicatorIcon, PencilSquareIcon } from "./Icons";
+import { DragIndicatorIcon, PencilSquareIcon, TrashIcon } from "./Icons";
 
 type TContainerProps = React.ComponentPropsWithoutRef<"div"> &
   TColumn & {
     isDragOverlay?: boolean;
     onAddTask?: (columnId: string) => void;
     tasks: TCard[];
-    onEditTitleColumn?: (id:string, value: string) => void;
+    onEditTitleColumn?: (id: string, value: string) => void;
+    onRemove?: (id: string) => void;
   };
 
 export default function Column({
@@ -22,8 +23,10 @@ export default function Column({
   onAddTask,
   tasks,
   onEditTitleColumn,
+  onRemove,
   children,
 }: TContainerProps) {
+  const [dropdown, setDropdown] = useState<boolean>(false);
   const [editable, setEditable] = useState<boolean>(false);
   const {
     isDragging,
@@ -86,14 +89,19 @@ export default function Column({
             onEditTitleColumn && onEditTitleColumn(id, value)
           }
         />
-        <div className="flex items-center">
+        <div className="flex items-center relative">
           {!editable && (
-            <div
-              className="hover:bg-gray-200 cursor-pointer p-2 rounded-md"
-              onClick={() => setEditable((e) => !e)}
-            >
-              <PencilSquareIcon width="15" height="15" />
-            </div>
+            <>
+              <div
+                className="hover:bg-gray-200 cursor-pointer p-2 rounded-md"
+                onClick={() => setEditable((e) => !e)}
+              >
+                <PencilSquareIcon width="15" height="15" />
+              </div>
+              <div className="hover:bg-red-600 cursor-pointer p-2 rounded-md hover-icon-white" onClick={() => onRemove(id)}>
+                <TrashIcon color="#333" width="17" height="17" />
+              </div>
+            </>
           )}
           <div
             className="cursor-grab w-7 flex justify-end"

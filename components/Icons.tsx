@@ -139,3 +139,58 @@ export function PencilSquareIcon({
     </svg>
   );
 }
+
+export function TrashIcon({ width = "25", height = "25", color = "#000" }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="-0.5 -0.5 14 14"
+      height={height}
+      width={width}
+    >
+      <g id="recycle-bin-2--remove-delete-empty-bin-trash-garbage">
+        <path
+          id="Vector"
+          stroke={color}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M0.9285714285714286 3.25h11.142857142857142"
+          strokeWidth="1"
+        ></path>
+        <path
+          id="Vector_2"
+          stroke={color}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M2.3214285714285716 3.25h8.357142857142858v8.357142857142858a0.9285714285714286 0.9285714285714286 0 0 1 -0.9285714285714286 0.9285714285714286h-6.5a0.9285714285714286 0.9285714285714286 0 0 1 -0.9285714285714286 -0.9285714285714286v-8.357142857142858Z"
+          strokeWidth="1"
+        ></path>
+        <path
+          id="Vector_3"
+          stroke={color}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M4.178571428571429 3.25V2.7857142857142856a2.3214285714285716 2.3214285714285716 0 1 1 4.642857142857143 0v0.4642857142857143"
+          strokeWidth="1"
+        ></path>
+        <path
+          id="Vector_4"
+          stroke={color}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M5.107142857142858 6.036642857142858v3.716142857142857"
+          strokeWidth="1"
+        ></path>
+        <path
+          id="Vector_5"
+          stroke={color}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M7.892857142857143 6.036642857142858v3.716142857142857"
+          strokeWidth="1"
+        ></path>
+      </g>
+    </svg>
+  );
+}
