@@ -98,7 +98,10 @@ export default function Column({
               >
                 <PencilSquareIcon width="15" height="15" />
               </div>
-              <div className="hover:bg-red-600 cursor-pointer p-2 rounded-md hover-icon-white" onClick={() => onRemove(id)}>
+              <div
+                className="hover:bg-red-600 cursor-pointer p-2 rounded-md hover-icon-white"
+                onClick={() => onRemove && onRemove(id)}
+              >
                 <TrashIcon color="#333" width="17" height="17" />
               </div>
             </>
