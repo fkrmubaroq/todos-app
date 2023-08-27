@@ -2,8 +2,8 @@ import { NextPage } from "next";
 import Head from "next/head";
 import { useCallback, useMemo, useState } from "react";
 import cn from "classnames";
-import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
-import { SortableContext, arrayMove, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, arrayMove, horizontalListSortingStrategy, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { TCard, TColumn } from "@/types";
 import Column from "@/components/Column";
 import ButtonAdd from "@/components/ButtonAdd";
@@ -31,6 +31,8 @@ const Index: NextPage = () => {
   const [activeTask, setActiveTask] = useState<TCard | null >(null);
   const [tasks, setTasks] = useState<({ columnId: string } & TCard)[]>([]); 
   const itemsId = useMemo(() => columns.map(column => column.id), [columns]);
+  const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
+
   const onAddColumn = () => {
     setColumns((state) => [
       ...state,
@@ -137,17 +139,40 @@ const Index: NextPage = () => {
 
   const onEditTitleColumn = (id: string, title: string) => {
     setColumns(columns => {
-      const findColumnByIndex = columns.findIndex((column) => column.id === id);
-      console.log("find ", findColumnByIndex);
-      if (findColumnByIndex === -1) return columns;
+      const findColumnByid = columns.findIndex((column) => column.id === id);
+      console.log("find ", findColumnByid);
+      if (findColumnByid === -1) return columns;
       const clone = structuredClone(columns);
-      clone.splice(findColumnByIndex, 1, {
-        ...columns[findColumnByIndex],
+      clone.splice(findColumnByid, 1, {
+        ...columns[findColumnByid],
         title,
       });
       return clone;
     })
   };
+
+  const onEditTask = (id: string, title: string) => {
+    console.log("id ", id, title);
+    setTasks(tasks => {
+      const findTaskByid = tasks.findIndex((task) => task.id === id);
+      if (findTaskByid === -1) return tasks;
+      const clone = structuredClone(tasks);
+      clone.splice(findTaskByid, 1, {
+        ...tasks[findTaskByid],
+        title,
+      });
+      return clone;
+
+    })
+  };
+
+  const supportSensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance:8
+      }
+    })
+  )
 
   return (
     <>
@@ -158,6 +183,7 @@ const Index: NextPage = () => {
       <h1 className="text-2xl font-semibold text-center my-6">Todos App</h1>
       <div className="flex gap-x-7 pt-8 mx-10 min-h-screen overflow-auto ">
         <DndContext
+          sensors={supportSensors}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
           onDragOver={onDragOver}
@@ -173,7 +199,16 @@ const Index: NextPage = () => {
                 onAddCard={onAddCard}
                 onEditTitleColumn={onEditTitleColumn}
                 tasks={filterTasksByColumnId(item.id)}
-              />
+              >
+                <SortableContext
+                  items={taskIds}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {tasks.map((task) => (
+                    <Card onEdit={onEditTask} key={task.id} {...task} />
+                  ))}
+                </SortableContext>
+              </Column>
             ))}
           </SortableContext>
 

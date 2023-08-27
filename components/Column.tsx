@@ -3,19 +3,15 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-
 import cn from "classnames";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
-import Card, { CardEmpty } from "./Card";
+import Card from "./Card";
 import { DragIndicatorIcon, PencilSquareIcon } from "./Icons";
-import { DragOverlay } from "@dnd-kit/core";
-import Portal from "./Portal";
-import { useOnClickOutside } from "@/lib/hooks";
-
 
 type TContainerProps = React.ComponentPropsWithoutRef<"div"> &
   TColumn & {
     isDragOverlay?: boolean;
     onAddCard?: (columnId: string) => void;
     tasks: TCard[];
-    onEditTitleColumn: (id:string, value: string) => void;
+    onEditTitleColumn?: (id:string, value: string) => void;
   };
 
 export default function Column({
@@ -26,6 +22,7 @@ export default function Column({
   onAddCard,
   tasks,
   onEditTitleColumn,
+  children,
 }: TContainerProps) {
   const [editable, setEditable] = useState<boolean>(false);
   const {
@@ -45,7 +42,6 @@ export default function Column({
       },
     },
   });
-  const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || "",
@@ -68,8 +64,8 @@ export default function Column({
 
   const onSave = () => {
     setEditable(false);
-    onEditTitleColumn(id, title);
-  }
+    onEditTitleColumn && onEditTitleColumn(id, title);
+  };
 
   return (
     <div
@@ -86,7 +82,9 @@ export default function Column({
           editable={editable}
           text={title}
           total={tasks?.length}
-          onEdit={(value: string) => onEditTitleColumn(id, value)}
+          onEdit={(value: string) =>
+            onEditTitleColumn && onEditTitleColumn(id, value)
+          }
         />
         <div className="flex items-center">
           {!editable && (
@@ -116,14 +114,7 @@ export default function Column({
           <div
             className={cn("flex flex-col gap-y-2 z-10 h-[600px] overflow-auto")}
           >
-            <SortableContext
-              items={taskIds}
-              strategy={verticalListSortingStrategy}
-            >
-              {tasks.map((task) => (
-                <Card key={task.id} {...task} />
-              ))}
-            </SortableContext>
+            {children ? children : <></>}
           </div>
         </div>
         <div
