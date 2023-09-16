@@ -1,5 +1,6 @@
 # todos-app
-[Demo App](https://todos-c86m1nreo-hashab1926.vercel.app)!
+
+[Demo App](https://todos-app-eosin.vercel.app/)
 
 🎉 Congratulations, your project was successfully generated with [Create Next Stack](https://www.create-next-stack.com/)!
 
