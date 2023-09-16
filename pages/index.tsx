@@ -8,7 +8,6 @@ import Column from "@/components/Column";
 import { generateID } from "@/utils";
 import dynamic from "next/dynamic";
 import Card from "@/components/Card";
-
 type TContainer = {
   icon: React.ReactNode;
   containerName: string;
@@ -248,7 +247,7 @@ const Index: NextPage = () => {
         createdAt: new Date().toString(),
       };
 
-      return [...(clone || []), newTask];
+      return [newTask, ...(clone || [])];
     })
   };
 
