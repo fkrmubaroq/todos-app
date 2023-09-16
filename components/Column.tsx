@@ -1,9 +1,8 @@
 import { TCard, TColumn } from "@/types";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import cn from "classnames";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
-import Card from "./Card";
 import { DragIndicatorIcon, PencilSquareIcon, TrashIcon } from "./Icons";
 
 type TContainerProps = React.ComponentPropsWithoutRef<"div"> &
@@ -28,6 +27,7 @@ export default function Column({
 }: TContainerProps) {
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [editable, setEditable] = useState<boolean>(false);
+
   const {
     isDragging,
     setNodeRef,
@@ -58,7 +58,7 @@ export default function Column({
         {...listeners}
         {...attributes}
         className={cn(
-          "bg-grey p-2 border-2 border-dashed shrink-0 rounded-md w-[300px] h-[calc(100vh-100px)]",
+          "bg-grey p-2 border-2 border-dashed shrink-0 rounded-md w-[300px] h-[calc(100vh-180px)]",
           className
         )}
       ></div>
@@ -123,7 +123,7 @@ export default function Column({
       >
         <div>
           <div
-            className={cn("flex flex-col gap-y-2 z-10 h-[600px] overflow-auto")}
+            className={cn("flex flex-col gap-y-2 z-10 h-[37.5rem] overflow-auto")}
           >
             {children ? children : <></>}
           </div>
@@ -157,6 +157,7 @@ function Title({
   useEffect(() => {
     if (!inputRef || !editable) return;
     inputRef.current?.focus();
+    inputRef.current?.select();
   }, [editable]);
 
   return (

@@ -1,17 +1,13 @@
 import { NextPage } from "next";
 import Head from "next/head";
 import { useCallback, useMemo, useState } from "react";
-import cn from "classnames";
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove, horizontalListSortingStrategy, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { TCard, TColumn } from "@/types";
 import Column from "@/components/Column";
-import ButtonAdd from "@/components/ButtonAdd";
 import { generateID } from "@/utils";
-import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import Card from "@/components/Card";
-import { TrashIcon } from "@/components/Icons";
 
 
 type TContainer = {
@@ -26,11 +22,167 @@ const Portal = dynamic(
   }
 );
 
+const generateId = [generateID(), generateID(), generateID(), generateID()];
+const initColumn = [
+  {
+    id: generateId[0],
+    title: "TODO"
+  },
+  {
+    id: generateId[1],
+    title: "DO TODAY"
+  },
+  {
+    id: generateId[2],
+    title: "IN PROGRESS"
+  },
+  {
+    id: generateId[3],
+    title: "COMPLETE"
+  },
+];
+
+const initTasks = [
+  // TODO
+  {
+    columnId: generateId[0],
+    id: generateID(),
+    title: "Create landing page user",
+    createdAt: new Date("2023-09-15").toString(),
+  },
+  {
+    columnId: generateId[0],
+    id: generateID(),
+    title: "Correct spelling tutorial page",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  {
+    columnId: generateId[0],
+    id: generateID(),
+    title: "Measure load performance of the site",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  {
+    columnId: generateId[0],
+    id: generateID(),
+    title: "Measure load performance of the site",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  {
+    columnId: generateId[0],
+    id: generateID(),
+    title: "Create documentation SEO for all developer",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  {
+    columnId: generateId[0],
+    id: generateID(),
+    title: "Use SASS for stylesheet",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  // DO TODAY
+  {
+    columnId: generateId[1],
+    id: generateID(),
+    title: "Write blog entry for our new product",
+    createdAt: new Date().toString(),
+  },
+  {
+    columnId: generateId[1],
+    id: generateID(),
+    title: "Schedule & prepare database maintenance",
+    createdAt: new Date().toString(),
+  },
+  {
+    columnId: generateId[1],
+    id: generateID(),
+    title: "Create Signin on Google+",
+    createdAt: new Date().toString(),
+  },
+  {
+    columnId: generateId[1],
+    id: generateID(),
+    title: "Implement Design system",
+    createdAt: new Date().toString(),
+  },
+  {
+    columnId: generateId[1],
+    id: generateID(),
+    title: "Encahnce API capabilities",
+    createdAt: new Date().toString(),
+  },
+  
+  // IN PROGRESS
+  {
+    columnId: generateId[2],
+    id: generateID(),
+    title: "Create Signin on Google+",
+    createdAt: new Date().toString(),
+  },
+  {
+    columnId: generateId[2],
+    id: generateID(),
+    title: "Make sure sponsors are indicated for tech talk",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  {
+    columnId: generateId[2],
+    id: generateID(),
+    title: "Implement Ant Design",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  {
+    columnId: generateId[2],
+    id: generateID(),
+    title: "Drag and drop is not working on the calendar page",
+    createdAt: new Date("2023-09-10").toString(),
+  },
+  {
+    columnId: generateId[2],
+    id: generateID(),
+    title: "Document the service API",
+    createdAt: new Date("2023-09-09").toString(),
+  },
+  {
+    columnId: generateId[2],
+    id: generateID(),
+    title: "Allow User to upload avatar",
+    createdAt: new Date("2023-09-09").toString(),
+  },
+  {
+    columnId: generateId[2],
+    id: generateID(),
+    title: "Automated Tests",
+    createdAt: new Date("2023-09-09").toString(),
+  },
+
+  // COMPLETE
+  {
+    columnId: generateId[3],
+    id: generateID(),
+    title: "Initiate Automatic payment gateway  ",
+    createdAt: new Date("2023-09-15").toString(),
+  },
+  {
+    columnId: generateId[3],
+    id: generateID(),
+    title: "Create newsletter template",
+    createdAt: new Date("2023-08-01").toString(),
+  },
+  {
+    columnId: generateId[3],
+    id: generateID(),
+    title: "Investigate competitor site",
+    createdAt: new Date("2023-08-01").toString(),
+  },
+];
+
+
 const Index: NextPage = () => {
-  const [columns, setColumns] = useState<TColumn[]>([]);
+  const [columns, setColumns] = useState<TColumn[]>(initColumn);
   const [activeColumn, setActiveColumn] = useState<TColumn | null>(null);
   const [activeTask, setActiveTask] = useState<TCard | null >(null);
-  const [tasks, setTasks] = useState<({ columnId: string } & TCard)[]>([]); 
+  const [tasks, setTasks] = useState<({ columnId: string } & TCard)[]>(initTasks); 
   const itemsId = useMemo(() => columns.map(column => column.id), [columns]);
   const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
 

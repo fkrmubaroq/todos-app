@@ -1,6 +1,6 @@
 import { TCard } from "@/types";
 import cn from "classnames";
-import React, { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PencilSquareIcon, TimeIcon, TrashIcon } from "./Icons";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -39,6 +39,11 @@ export default function Card({
       },
     },
   });
+
+  useEffect(() => {
+    if (!editable) return;
+    textareaRef.current?.select();
+  }, [editable]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const style = {
